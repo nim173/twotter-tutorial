@@ -12,6 +12,22 @@
     <br/>
     <button @click="followUser">Follow</button>
     <br/>
+    <form class="user-profile__create-twoot" @submit.prevent="createNewTwoot"> 
+      <label for="newTwoot"><strong>New Twoot</strong></label>
+      <textarea id="newTwoot" rows="4" v-model="newTwootContent"/>
+      <div class="user-profile__create-twoot-type">
+        <label for="newTwootType"><strong>Type: </strong></label>
+        <select id="newTwootType" v-model="selectedTwootType">
+          <option :value="option.value"  v-for="(option, index) in twootTypes" :key="index">
+            {{ option.name }}
+          </option>
+        </select>
+
+        <button>
+          Twoot!
+        </button>
+      </div>
+    </form>
     <div>
       <TwootItem 
         v-for="twoot in user.twoots" 
@@ -45,7 +61,13 @@ export default {
           { id:2, content: 'blah is amazing!' },
           { id:3, content: 'blahblah is amazing!' }
         ]
-      }
+      },
+      twootTypes: [
+        { value: 'draft', name: 'Draft' },
+        { value: 'instant', name: 'Instant Twoot' }
+      ],
+      newTwootContent: '',
+      selectedTwootType: 'instant'
     }
   },
   watch: {
@@ -66,6 +88,15 @@ export default {
     },
     toggleFavourite(id) {
       console.log('Favourited Tweet: ', id);
+    },
+    createNewTwoot() {
+      if (this.newTwootContent && this.selectedTwootType !== 'draft') {
+        this.user.twoots.unshift({
+          id: this.user.twoots.length + 1,
+          content: this.newTwootContent
+        })
+      }
+      this.newTwootContent = '';
     }
   },
   // lifecycle hook
